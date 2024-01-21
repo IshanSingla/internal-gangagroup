@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "377941489644",
+    "project_id": "astrohut-internal",
+    "storage_bucket": "astrohut-internal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377941489644:android:e0d6d505ba8b5c4d85f2c9",
+        "android_client_info": {
+          "package_name": "com.gangagroup.internal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGBsdGmQLoHv3nOEfdWMgiaAR9NJ_7ln4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
