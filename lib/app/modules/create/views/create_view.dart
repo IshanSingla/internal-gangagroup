@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; // Add this line for date formatting
+
 import '../controllers/create_controller.dart';
-import 'package:country_state_city/country_state_city.dart' as csc;
 
 class CreateView extends GetView<CreateController> {
   @override
@@ -12,7 +11,7 @@ class CreateView extends GetView<CreateController> {
         title: const Text('Create Contact'),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
             onPressed: controller.savePerson,
           ),
         ],
@@ -21,13 +20,14 @@ class CreateView extends GetView<CreateController> {
           key: controller.formKey,
           child: Obx(
             () => ListView(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               children: <Widget>[
                 buildTextFormField(
                   label: 'Name',
                   icon: Icons.person,
                   onSaved: (value) => controller.name.value = value ?? '',
                 ),
+                const SizedBox(height: 20),
                 buildTextFormField(
                   numpad: true,
                   label: 'Mobile Number',
@@ -38,6 +38,7 @@ class CreateView extends GetView<CreateController> {
                       value!.isEmpty ? 'Please enter a mobile number' : null,
                   defaultValue: controller.mobileNumber.value,
                 ),
+                const SizedBox(height: 20),
                 buildTextFormField(
                   numpad: true,
                   label: 'WhatsApp Number',
@@ -48,65 +49,95 @@ class CreateView extends GetView<CreateController> {
                       value!.isEmpty ? 'Please enter a WhatsApp number' : null,
                   defaultValue: controller.whatsappNumber.value,
                 ),
-                Obx(
-                  () => buildTextButton(
-                    icon: Icons.calendar_today,
-                    label: controller.dob.value != null
-                        ? 'Date of Birth: ${DateFormat('yyyy-MM-dd').format(controller.dob.value!)}'
-                        : 'Select Date of Birth',
-                    onPressed: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: controller.dob.value ?? DateTime.now(),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime.now(),
-                      );
-                      if (pickedDate != null) {
-                        controller.dob.value = pickedDate;
-                      }
-                    },
+                const SizedBox(height: 20),
+                const TextField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.calendar_today),
+                    label: Text("Date of Birth"),
+                    hintText: "YYYY-MM-dd",
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                DropdownButtonFormField<csc.State>(
+                // Obx(
+                //   () => buildTextButton(
+                //     icon: Icons.calendar_today,
+                //     label: controller.dob.value != null
+                //         ? 'Date of Birth: ${DateFormat('yyyy-MM-dd').format(controller.dob.value!)}'
+                //         : 'YYYY-MM-dd',
+                // onPressed: () async {
+                // DateTime? pickedDate = await showDatePicker(
+                //   context: context,
+                //   initialDate: controller.dob.value ?? DateTime.now(),
+                //   firstDate: DateTime(1900),
+                //   lastDate: DateTime.now(),
+                // );
+                // if (pickedDate != null) {
+                //   controller.dob.value = pickedDate;
+                // }
+                //   },
+                // ),
+                // ),
+                const SizedBox(height: 20),
+                const TextField(
                   decoration: InputDecoration(
                     labelText: 'State',
                     prefixIcon: Icon(Icons.map),
                     border: OutlineInputBorder(),
                   ),
-                  // value: controller.selectedState.value,
-                  items: controller.states.map((state) {
-                    return DropdownMenuItem<csc.State>(
-                      value: state,
-                      child: Text(state.name),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    controller.placeOfBirth.state = value!.name;
-                    controller.selectedState.value = value.isoCode;
-                  },
                 ),
-                DropdownButtonFormField<csc.City>(
-                  decoration: const InputDecoration(
+                // DropdownButtonFormField<csc.State>(
+                //   decoration: const InputDecoration(
+                //     labelText: 'State',
+                //     prefixIcon: Icon(Icons.map),
+                //     border: OutlineInputBorder(),
+                //   ),
+                //   items: controller.states.map((state) {
+                //     return DropdownMenuItem<csc.State>(
+                //       value: state,
+                //       child: Container(
+                //           width: 210,
+                //           color: Colors.red,
+                //           child: Text(state.name)),
+                //     );
+                //   }).toList(),
+                //   onChanged: (value) {
+                //     controller.placeOfBirth.state = value!.name;
+                //     controller.selectedState.value = value.isoCode;
+                //   },
+                // ),
+
+                // DropdownButtonFormField<csc.City>(
+                //   decoration: const InputDecoration(
+                //     labelText: 'City',
+                //     prefixIcon: Icon(Icons.location_city),
+                //     border: OutlineInputBorder(),
+                //   ),
+                //   // value: controller.selectedCity.value,
+                //   items: controller.cities.map((city) {
+                //     return DropdownMenuItem<csc.City>(
+                //       value: city,
+                //       child: Text(city.name),
+                //     );
+                //   }).toList(),
+                //   onChanged: (value) {
+                //     controller.placeOfBirth.city = value!.name;
+                //   },
+                // ),
+                const SizedBox(height: 20),
+                const TextField(
+                  decoration: InputDecoration(
                     labelText: 'City',
-                    prefixIcon: Icon(Icons.location_city),
+                    prefixIcon: Icon(Icons.map),
                     border: OutlineInputBorder(),
                   ),
-                  // value: controller.selectedCity.value,
-                  items: controller.cities.map((city) {
-                    return DropdownMenuItem<csc.City>(
-                      value: city,
-                      child: Text(city.name),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    controller.placeOfBirth.city = value!.name;
-                  },
                 ),
+                const SizedBox(height: 20),
                 buildTextFormField(
                   label: 'District',
                   icon: Icons.location_city,
                   onSaved: (value) => controller.placeOfBirth.district = value,
                 ),
+                const SizedBox(height: 20),
                 DropdownButtonFormField<int>(
                   decoration: const InputDecoration(
                     labelText: 'Series Number',
@@ -124,7 +155,29 @@ class CreateView extends GetView<CreateController> {
                     controller.seriesNumber = value ?? 0;
                   },
                 ),
-
+                const SizedBox(height: 20),
+                DropdownButtonFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Gender',
+                    prefixIcon: Icon(Icons.location_city),
+                    border: OutlineInputBorder(),
+                  ),
+                  value: controller.genderValue,
+                  items: <DropdownMenuItem>[
+                    const DropdownMenuItem<String>(
+                      child: Text("Gender"),
+                    ),
+                    ...controller.gender.map((value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ],
+                  onChanged: (value) {
+                    controller.genderValue = value;
+                  },
+                ),
                 // ... other fields ...
               ],
             ),

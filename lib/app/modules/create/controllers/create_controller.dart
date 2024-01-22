@@ -19,7 +19,8 @@ class CreateController extends GetxController {
   PlaceOfBirth placeOfBirth = PlaceOfBirth();
   int seriesNumber = 1;
   Rx<DateTime?> dob = Rx<DateTime?>(null);
-
+  String? genderValue;
+  RxList gender = ["Male", "Female"].obs;
   @override
   void onInit() {
     super.onInit();
