@@ -30,26 +30,23 @@ class HomeView extends GetView<HomeController> {
         ],
       ),
       body: Obx(
-        () => ListView.builder(
-          itemCount: controller.people.length,
-          itemBuilder: (context, index) {
-            final person = controller.people[index];
-            return ListTile(
-              leading: CircleAvatar(
-                child: Text(person.name == ""
-                    ? person.mobileNumber.substring(0, 1)
-                    : person.name!.substring(0, 1)),
-              ),
-              title: Text(person.name == null || person.name == ""
-                  ? 'No Name'
-                  : person.name!),
-              subtitle: Text(person.mobileNumber),
-              onTap: () {
-                Get.to(() => PersonDetailPage(person: person));
-              },
-            );
-          },
-        ),
+        () {
+          return ListView.builder(
+            itemCount: controller.people.length,
+            itemBuilder: (context, index) {
+              final person = controller.people[index];
+              return ListTile(
+                title: Text(person.name == null || person.name == ""
+                    ? 'No Name'
+                    : person.name!),
+                subtitle: Text(person.mobileNumber),
+                onTap: () {
+                  Get.to(() => PersonDetailPage(person: person));
+                },
+              );
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -100,9 +97,6 @@ class CustomSearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         final person = results[index];
         return ListTile(
-          leading: CircleAvatar(
-            child: Text(person.name?.substring(0, 1) ?? ''),
-          ),
           title: Text(person.name ?? 'No Name'),
           subtitle: Text(person.mobileNumber),
           onTap: () {
@@ -124,9 +118,6 @@ class CustomSearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         final person = suggestions[index];
         return ListTile(
-          leading: CircleAvatar(
-            child: Text(person.name?.substring(0, 1) ?? ''),
-          ),
           title: Text(person.name ?? 'No Name'),
           subtitle: Text(person.mobileNumber),
           onTap: () {

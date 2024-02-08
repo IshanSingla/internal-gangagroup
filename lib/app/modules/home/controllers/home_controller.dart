@@ -6,60 +6,7 @@ import 'dart:convert';
 
 class HomeController extends GetxController {
   //TODO: Implement HomeController
-  RxList<Person> people = <Person>[
-    // Person(
-    //   name: 'Ishan Doe',
-    //   mobileNumber: '1234567890',
-    //   whatsappNumber: '1234567890',
-    //   dob: DateTime.now(),
-    //   placeOfBirth: PlaceOfBirth(
-    //     district: 'District',
-    //     city: 'City',
-    //     state: 'State',
-    //     country: 'Country',
-    //   ),
-    //   seriesNumber: 1,
-    // ),
-    // Person(
-    //   name: 'Yashu Doe',
-    //   mobileNumber: '1234567890',
-    //   whatsappNumber: '1234567890',
-    //   dob: DateTime.now(),
-    //   placeOfBirth: PlaceOfBirth(
-    //     district: 'District',
-    //     city: 'City',
-    //     state: 'State',
-    //     country: 'Country',
-    //   ),
-    //   seriesNumber: 2,
-    // ),
-    // Person(
-    //   name: 'John Smith',
-    //   mobileNumber: '1234567890',
-    //   whatsappNumber: '1234567890',
-    //   dob: DateTime.now(),
-    //   placeOfBirth: PlaceOfBirth(
-    //     district: 'District',
-    //     city: 'City',
-    //     state: 'State',
-    //     country: 'Country',
-    //   ),
-    //   seriesNumber: 3,
-    // ),
-    // Person(
-    //   name: 'Jane Smith',
-    //   mobileNumber: '1234567890',
-    //   whatsappNumber: '1234567890',
-    //   dob: DateTime.now(),
-    //   placeOfBirth: PlaceOfBirth(
-    //     district: 'District',
-    //     city: 'City',
-    //     state: 'State',
-    //     country: 'Country',
-    //   ),
-    //   seriesNumber: 4,
-    // ),
-  ].obs;
+  RxList<Person> people = <Person>[].obs;
   bool isSortedAscending = true;
   @override
   void onInit() {
@@ -79,7 +26,7 @@ class HomeController extends GetxController {
 
   void refresha() {
     http.get(
-      Uri.parse('https://horoscope-backend.vercel.app/api/person'),
+      Uri.parse('https://horoscope-backend.vercel.app/api/contact'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -91,6 +38,27 @@ class HomeController extends GetxController {
       }));
 
       // people.value = data;
+    });
+  }
+
+  void updateStatus(Person person) {
+    http
+        .put(
+      Uri.parse(
+          'https://horoscope-backend.vercel.app/api/contact/${person.id}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(person.toJson()),
+    )
+        .then((response) {
+      if (response.statusCode > 320) {
+        Get.snackbar("Error", response.body);
+        debugPrint(response.body);
+        return;
+      }
+      Get.snackbar("Success", "Status updated successfully");
+      refresha();
     });
   }
 

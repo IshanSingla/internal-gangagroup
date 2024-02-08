@@ -18,6 +18,8 @@ dependencies:
   country_state_city: ^0.1.6
   http: ^1.2.0
   dob_input_field: ^2.0.0
+  google_places_flutter: ^2.0.7
+  url_launcher: ^6.2.4
 dev_dependencies: 
   flutter_lints: ^2.0.0
   flutter_test: 

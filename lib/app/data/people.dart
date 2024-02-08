@@ -1,66 +1,69 @@
 class Person {
+  String? id;
   String? name;
   String mobileNumber;
   String whatsappNumber;
   DateTime? dob;
   PlaceOfBirth? placeOfBirth;
   int seriesNumber;
+  String? gender;
 
-  Person({
-    this.name,
-    required this.mobileNumber,
-    required this.whatsappNumber,
-    this.dob,
-    this.placeOfBirth,
-    this.seriesNumber = 1,
-  });
+  Person(
+      {
+        this.id,
+        this.name,
+      required this.mobileNumber,
+      required this.whatsappNumber,
+      this.dob,
+      this.placeOfBirth,
+      this.seriesNumber = 0,
+      this.gender});
 
   factory Person.fromJson(Map<String, dynamic> json) {
     return Person(
-      name: json['name'],
-      mobileNumber: json['mobile_number'],
-      whatsappNumber: json['whatsapp_number'],
-      dob: json['dob'],
-      placeOfBirth: json['place_of_birth'] != null
-          ? PlaceOfBirth.fromJson(json['place_of_birth'])
-          : null,
-      seriesNumber: json['series_number'],
-    );
+        id: json['_id'],
+        name: json['name'],
+        mobileNumber: json['mobile_number'],
+        whatsappNumber: json['whatsapp_number'],
+        dob: json['dob'] != null ? DateTime.parse(json['dob']) : null,
+        placeOfBirth: json['place_of_birth'] != null
+            ? PlaceOfBirth.fromJson(json['place_of_birth'])
+            : null,
+        seriesNumber: json['series_number'],
+        gender: json['gender']);
   }
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'mobile_number': mobileNumber,
       'whatsapp_number': whatsappNumber,
-      'dob': dob,
+      'dob': dob.toString(),
       'place_of_birth': placeOfBirth?.toJson(),
       'series_number': seriesNumber,
+      'gender': gender,
     };
   }
 }
 
 class PlaceOfBirth {
-  String? district;
-  String? city;
-  String? state;
-  String? country;
+  String? description;
+  double? latitude;
+  double? longitude;
 
-  PlaceOfBirth({this.district, this.city, this.state, this.country = "India"});
+  PlaceOfBirth({this.description, this.latitude, this.longitude});
 
   factory PlaceOfBirth.fromJson(Map<String, dynamic> json) {
     return PlaceOfBirth(
-      district: json['district'],
-      city: json['city'],
-      state: json['state'],
-      country: json['country'],
+      description: json['description'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
     );
   }
   Map<String, dynamic> toJson() {
     return {
-      'district': district,
-      'city': city,
-      'state': state,
-      'country': country,
+      "description": description,
+      "latitude": latitude,
+      "longitude": longitude,
     };
   }
 }

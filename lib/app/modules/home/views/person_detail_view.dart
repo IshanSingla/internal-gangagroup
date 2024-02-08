@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:internal/app/data/people.dart';
+import 'package:internal/app/modules/home/controllers/home_controller.dart';
+import 'package:internal/app/utils/status.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PersonDetailPage extends StatelessWidget {
   final Person person;
+  HomeController homeController = Get.find<HomeController>();
 
   // ignore: use_key_in_widget_constructors
-  const PersonDetailPage({required this.person});
+  PersonDetailPage({required this.person});
 
   @override
   Widget build(BuildContext context) {
@@ -13,34 +18,11 @@ class PersonDetailPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            expandedHeight: 300.0,
             floating: false,
             pinned: true,
-            title: Text(person.name ?? 'No Name'),
-            flexibleSpace: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 55,
-                  backgroundColor: const Color.fromRGBO(6, 184, 239, 0.2),
-                  child: Text(
-                    person.name == "" || person.name == null
-                        ? person.mobileNumber.substring(0, 1)
-                        : person.name!.substring(0, 1),
-                    style: const TextStyle(
-                        fontSize: 40, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  person.name == "" || person.name == null
-                      ? 'No Name'
-                      : person.name!,
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
+            title: Text((person.name == "" || person.name == null)
+                ? 'No Name'
+                : person.name ?? ""),
           ),
           SliverToBoxAdapter(
             child: Container(
@@ -65,18 +47,20 @@ class PersonDetailPage extends StatelessWidget {
                       ),
                     ),
                     ListTile(
-                      leading: Icon(Icons.phone),
+                      leading: const Icon(Icons.phone),
                       title: Text(person.mobileNumber),
-                      subtitle: Text('Mobile'),
+                      subtitle: const Text('Mobile'),
+                      onTap: () => _launchDialer(person.mobileNumber),
                     ),
                     ListTile(
-                      leading: Icon(Icons.phone_android),
+                      leading: const Icon(Icons.phone_android),
                       title: Text(person.whatsappNumber),
-                      subtitle: Text('WhatsApp'),
+                      subtitle: const Text('WhatsApp'),
+                      onTap: () => _launchWhatsApp(person.whatsappNumber),
                     ),
                     ListTile(
-                      leading: Icon(Icons.cake),
-                      title: Text('Date of Birth'),
+                      leading: const Icon(Icons.cake),
+                      title: const Text('Date of Birth'),
                       subtitle: Text(person.dob == null
                           ? "Not Available"
                           : person.dob!.toLocal().toString().split(' ')[0] +
@@ -88,20 +72,19 @@ class PersonDetailPage extends StatelessWidget {
                                   .split(".")[0]),
                     ),
                     ListTile(
-                      leading: Icon(Icons.location_city),
-                      title: Text('Place of Birth'),
+                      leading: const Icon(Icons.location_city),
+                      title: const Text('Place of Birth'),
                       subtitle: Text([
-                        person.placeOfBirth?.district,
-                        person.placeOfBirth?.city,
-                        person.placeOfBirth?.state,
-                        person.placeOfBirth?.country,
-                      ].where((s) => s != null && s.isNotEmpty).join(', ')),
+                        person.placeOfBirth?.description ?? "Not Available",
+                      ].where((s) => s.isNotEmpty).join(', ')),
                     ),
-                    ListTile(
-                      leading: Icon(Icons.confirmation_number),
-                      title: Text('Series Number'),
-                      subtitle: Text(person.seriesNumber.toString()),
-                    ),
+                    buildStatusDropdown(),
+                    // ListTile(
+                    //   leading: const Icon(Icons.confirmation_number),
+                    //   title: const Text('Status Number'),
+                    //   subtitle: Text(
+                    //       "${person.seriesNumber}). ${statuses[person.seriesNumber]}"),
+                    // ),
                   ],
                 ),
               ),
@@ -110,5 +93,59 @@ class PersonDetailPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget buildStatusDropdown() {
+    return DropdownButtonFormField<int>(
+      decoration: const InputDecoration(
+        labelText: 'Status',
+        // prefixIcon: Icon(Icons.confirmation_number),
+        border: OutlineInputBorder(),
+      ),
+      value: person
+          .seriesNumber, // Ensure you have statusNumber in your controller
+      items: statuses.asMap().entries.map((entry) {
+        int idx = entry.key;
+        String val = "${entry.key}). ${entry.value}";
+        return DropdownMenuItem<int>(
+          value: idx,
+          child: Text(val),
+        );
+      }).toList(),
+      onChanged: (value) {
+        person.seriesNumber = value ?? 0;
+        homeController.updateStatus(person);
+      },
+    );
+  }
+
+  void _launchDialer(String number) async {
+    final url = 'tel:$number';
+    final Uri _url = Uri.parse(url);
+    if (!await launchUrl(_url)) {
+      Get.snackbar("Error", "Could not Open Dialer");
+    }
+    // if (await canLaunch(url)) {
+    //   await launch(url);
+    // } else {
+    //   throw 'Could not launch $url';
+    // }
+  }
+
+  void _launchWhatsApp(String number) async {
+    // Country code is needed for WhatsApp
+    final countryCode = '+91'; // Replace with the appropriate country code
+
+    final url =
+        'https://wa.me/$countryCode$number?text='; // You can pre-fill text if you want
+    final Uri _url = Uri.parse(url);
+    if (!await launchUrl(_url)) {
+      Get.snackbar("Error", "Could not Open WhatsApp");
+    }
+    // if (await canLaunch(url)) {
+    //   await launch(url);
+    // } else {
+    //   throw 'Could not launch $url';
+    // }
   }
 }
