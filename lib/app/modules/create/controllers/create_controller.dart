@@ -38,7 +38,7 @@ class CreateController extends GetxController {
       whatsappNumberController.text = arguments['number'];
     }
     http.get(
-      Uri.parse('https://horoscope-backend.vercel.app/api/call'),
+      Uri.parse('https://horoscope-backend.vercel.app/api/call/ivr'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -49,13 +49,11 @@ class CreateController extends GetxController {
         return;
       }
       try {
-        debugPrint(jsonDecode(value.body)["mobile_number"].toString());
         Person person = Person.fromJson(jsonDecode(value.body));
         Get.back();
         Get.to(() => PersonDetailPage(person: person));
       } catch (e) {
-        mobileNumberController.text = jsonDecode(value.body)["mobile_number"];
-        whatsappNumberController.text = jsonDecode(value.body)["mobile_number"];
+        mobileNumberController.text = jsonDecode(value.body)["from"];
       }
     }).catchError((e) {
       Get.snackbar("Error", "Something went wrong");

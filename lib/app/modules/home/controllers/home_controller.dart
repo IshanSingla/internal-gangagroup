@@ -24,42 +24,43 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  void refresha() {
-    http.get(
+  Future<void> refresha() async {
+    var response = await http.get(
       Uri.parse('https://horoscope-backend.vercel.app/api/contact'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-    ).then((value) {
-      people.clear();
-      people.addAll((jsonDecode(value.body) as List).map((item) {
+    );
+    people.clear();
+    var data = (jsonDecode(response.body) as List);
+    var list = data.map((item) {
+      try {
         var e = Person.fromJson(item);
         return e;
-      }));
-
-      // people.value = data;
-    });
+      } catch (e) {
+        debugPrint(e.toString());
+        return Person(mobileNumber: '', whatsappNumber: '');
+      }
+    }).toList();
+    people.addAll(list);
   }
 
-  void updateStatus(Person person) {
-    http
-        .put(
+  void updates(Person person) async {
+    var response = await http.put(
       Uri.parse(
           'https://horoscope-backend.vercel.app/api/contact/${person.id}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(person.toJson()),
-    )
-        .then((response) {
-      if (response.statusCode > 320) {
-        Get.snackbar("Error", response.body);
-        debugPrint(response.body);
-        return;
-      }
-      Get.snackbar("Success", "Status updated successfully");
-      refresha();
-    });
+    );
+    if (response.statusCode > 320) {
+      Get.snackbar("Error", response.body);
+      debugPrint(response.body);
+      return;
+    }
+    Get.snackbar("Success", "Status updated successfully");
+    await refresha();
   }
 
   void sortPeople() {

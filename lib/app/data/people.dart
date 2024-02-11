@@ -4,20 +4,21 @@ class Person {
   String mobileNumber;
   String whatsappNumber;
   DateTime? dob;
+  DateTime? createdAt;
   PlaceOfBirth? placeOfBirth;
   int seriesNumber;
   String? gender;
 
   Person(
-      {
-        this.id,
-        this.name,
+      {this.id,
+      this.name,
       required this.mobileNumber,
       required this.whatsappNumber,
       this.dob,
       this.placeOfBirth,
       this.seriesNumber = 0,
-      this.gender});
+      this.gender,
+      this.createdAt});
 
   factory Person.fromJson(Map<String, dynamic> json) {
     return Person(
@@ -26,6 +27,9 @@ class Person {
         mobileNumber: json['mobile_number'],
         whatsappNumber: json['whatsapp_number'],
         dob: json['dob'] != null ? DateTime.parse(json['dob']) : null,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : null,
         placeOfBirth: json['place_of_birth'] != null
             ? PlaceOfBirth.fromJson(json['place_of_birth'])
             : null,

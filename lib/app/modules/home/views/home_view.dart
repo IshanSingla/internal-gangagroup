@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../controllers/home_controller.dart';
 import 'person_detail_view.dart';
 
@@ -29,24 +30,30 @@ class HomeView extends GetView<HomeController> {
           ),
         ],
       ),
-      body: Obx(
-        () {
-          return ListView.builder(
-            itemCount: controller.people.length,
-            itemBuilder: (context, index) {
-              final person = controller.people[index];
-              return ListTile(
-                title: Text(person.name == null || person.name == ""
-                    ? 'No Name'
-                    : person.name!),
-                subtitle: Text(person.mobileNumber),
-                onTap: () {
-                  Get.to(() => PersonDetailPage(person: person));
-                },
-              );
-            },
-          );
-        },
+      body: RefreshIndicator(
+        onRefresh: () => controller.refresha(),
+        child: Obx(
+          () {
+            debugPrint(controller.people.length.toString());
+            return ListView.builder(
+              itemCount: controller.people.length,
+              itemBuilder: (context, index) {
+                final person = controller.people[index];
+                return ListTile(
+                  title: Text(person.name == null || person.name == ""
+                      ? 'No Name'
+                      : person.name!),
+                  subtitle: Text(person.mobileNumber),
+                  trailing: Text(DateFormat("dd-MM-yyyy HH:mm:ss")
+                      .format(person.createdAt!.toLocal())),
+                  onTap: () {
+                    Get.to(() => PersonDetailPage(person: person));
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

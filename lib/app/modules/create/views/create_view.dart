@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:internal/app/utils/status.dart';
+import '../../../utils/custom_input.dart';
 import '../controllers/create_controller.dart';
 
 class CreateView extends GetView<CreateController> {
@@ -270,127 +271,6 @@ class CreateView extends GetView<CreateController> {
       onChanged: (value) {
         controller.seriesNumber = value ?? 0;
       },
-    );
-  }
-}
-
-String? validateIndianMobileNumber(String? value) {
-  if (value == null || value.isEmpty) {
-    return 'Mobile number is required';
-  }
-
-  // Regex for validating Indian mobile number
-  String pattern = r'(^[6-9]\d{9}$)';
-  RegExp regExp = RegExp(pattern);
-
-  if (!regExp.hasMatch(value)) {
-    return 'Enter a valid mobile number';
-  }
-  return null;
-}
-
-class DateInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    var text = newValue.text;
-
-    if (newValue.selection.baseOffset == 0) {
-      return newValue;
-    }
-
-    // Limit the length of input to 10 characters (dd-mm-yyyy)
-    if (text.length > 10) {
-      return oldValue;
-    }
-
-    // Add dashes after day and month (dd-mm-yyyy)
-    if ((text.length == 2 || text.length == 5) &&
-        oldValue.text.length < newValue.text.length) {
-      text += '-';
-    }
-
-    // Split the text into parts
-    var parts = text.split('-');
-    if (parts.length > 1) {
-      // Validate days only if day part is complete (2 digits)
-      if (parts[0].length == 2) {
-        int? days = int.tryParse(parts[0]);
-        if (days != null && (days < 1 || days > 31)) {
-          return oldValue; // Reject input
-        }
-      }
-      // Validate months only if month part is complete (2 digits)
-      if (parts.length > 1 && parts[1].length == 2) {
-        int? months = int.tryParse(parts[1]);
-        if (months != null && (months < 1 || months > 12)) {
-          return oldValue; // Reject input
-        }
-      }
-      // Validate years only if year part is complete (4 digits)
-      if (parts.length > 2 && parts[2].length == 4) {
-        int? years = int.tryParse(parts[2]);
-        if (years != null && (years > DateTime.now().year)) {
-          return oldValue; // Reject input
-        }
-      }
-    }
-
-    return newValue.copyWith(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-    );
-  }
-}
-
-class TimeInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    var text = newValue.text;
-
-    if (newValue.selection.baseOffset == 0) {
-      return newValue;
-    }
-
-    // Limit the length of input to 8 characters (HH:mm:ss)
-    if (text.length > 8) {
-      return oldValue;
-    }
-
-    // Add colons after hour and minute (HH:mm:ss)
-    if ((text.length == 2 || text.length == 5) &&
-        oldValue.text.length < newValue.text.length) {
-      text += ':';
-    }
-
-    // Split the text into parts
-    var parts = text.split(':');
-    if (parts.length > 1) {
-      // Validate hours
-      int? hours = int.tryParse(parts[0]);
-      if (hours != null && (hours < 0 || hours > 23)) {
-        return oldValue; // Reject input
-      }
-      // Validate minutes
-      if (parts.length > 1) {
-        int? minutes = int.tryParse(parts[1]);
-        if (minutes != null && (minutes < 0 || minutes > 59)) {
-          return oldValue; // Reject input
-        }
-      }
-      // Validate seconds
-      if (parts.length > 2) {
-        int? seconds = int.tryParse(parts[2]);
-        if (seconds != null && (seconds < 0 || seconds > 59)) {
-          return oldValue; // Reject input
-        }
-      }
-    }
-
-    return newValue.copyWith(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
     );
   }
 }
